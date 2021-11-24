@@ -1,0 +1,176 @@
+Cluster Raspberry PI
+
+#Aqui você aprenderá como criar um cluster Raspberry Pi(supercomputador). Este tutorial funcionará com todos os outros Raspberry Pi
+
+Peças:
+
+-Raspberry Pi 4,3,2,0(qualquer raspbperry)
+-Switch ou roteador de rede  
+-Hub alimentado por USB
+-Cabo Micro USB 
+-Cartão MicroSD de 8 GB ou mais (classe 10)  
+-Cabo Ethernet
+-Case para as Raspberry
+-Cooler para resfriamento
+
+Instalando o Raspbian:
+
+-Baixe o sistema operacional Raspberry OS Lite
+-Baixe e instale Win32 Disk Imager
+-Grave a imagem Raspberry OS LIte no cartão MicroSD usando Win32 Disk Imager
+Conecte o cartão MicroSD ao Raspberry Pi 
+Conecte um cabo de rede do Raspberry Pi ao seu roteador 
+Conecte um cabo Micro USB do Raspberry Pi  a uma fonte de alimentação.
+
+Baixe PuTTY: 
+Abra o Prompt de Comando (digite cmd na pesquisa)
+Digite “ping raspberrypi” e pressione Enter (anote o endereço IP do seu Pi)
+Abra o PuTTY e digite o endereço IP do Pi e clique em abrir
+login: pi Senha: raspbian (pressione Enter)
+digite “sudo raspi-config“ e pressione Enter
+Expanda o sistema de arquivos
+Opções avançadas
+Defina o nome do host como Pi01
+Divida a memória
+Habilitar SSH
+Termine a configuração
+
+
+Instalando MPICH
+
+sudo apt-get update
+sudo mkdir mpich2
+cd ~/mpich2
+sudo wget http://www.mpich.org/static/downloads/3.2/mpich-3.2.tar.gz
+sudo tar xfz mpich-3.2. tar.gz
+sudo mkdir / home / rpimpi /
+sudo mkdir / home / rpimpi / mpi-install
+mkdir / home / pi / mpi-build
+sudo apt-get install gfortran
+sudo /home/pi/mpich2/mpich-3.2/configure -prefix = / home / rpimpi / mpi-install
+sudo make
+sudo make install
+cd ..
+nano .bashrc
+               PATH = $ PATH: / home / rpimpi / mpi-install / bin (cole no final do arquivo, então segure CTRL pressione “6” “x” solte CTRL pressione “y” “enter”)
+
+sudo reboot
+mpiexec -n 1 hostname
+
+
+
+Instalando MPI4PY
+
+
+wget https://bitbucket.org/mpi4py/mpi4py/downloads/mpi4py-2.0.0.tar.gz
+sudo tar -zxf mpi4py-2.0.0. tar.gz
+cd mpi4py-2.0.0
+sudo aptitude install python-dev
+compilação python setup.py
+sudo python setup.py install
+exportar PYTHONPATH = / home / pi / mpi4py-2.0.0
+mpiexec -n 5 python demo / helloworld.py
+
+
+Instale o nmap
+
+sudo apt-get update
+Sudo apt-get install nmap
+
+Obtenha o IP atual
+
+ifconfig
+
+Verificar sub-rede em busca de Pi's
+
+sudo nmap -sn 192.168.1. *
+
+
+Mude o nome de Pi (faça esta etapa para Pi02, Pi03, Pi04)
+
+
+ssh pi@192.168.1.2 (Pi01, Pi02, Pi03, Pi04 endereço IP)
+Senha: framboesa
+sudo raspi-config
+Role para baixo até Avançado, pressione Enter
+Role para baixo até Nome do host, pressione Enter
+Altere o nome (Pi01, Pi02, Pi03, Pi04) Pressione Enter
+Pressione Tab até que Concluir seja selecionado e pressione Enter
+
+
+Editar Machinefile
+
+nano arquivo de máquina
+192.168.1.1
+192.168.1.2
+192.168.1.3
+192.168.1.4
+
+
+Ver nome de máquina de texto
+
+- mpiexec -n 1 hostname
+- mpiexec -f machinefile -n 4 hostname
+
+Adicionar chaves a todos os pi's
+
+Pi01
+
+- ssh-keygen
+- cd ~
+- cd .ssh
+- cp id_rsa.pub Pi01
+
+
+Pi02
+
+- ssh pi@192.168.1.2
+- ssh-keygen
+- cd .ssh
+- cp id_rsa.pub Pi02
+- scp 192.168.1.1:/home/pi/.ssh/Pi01.
+- cat Pi01 >> authorized_keys
+saída
+
+Pi03
+
+- ssh pi@192.168.1.3
+- ssh-keygen
+- cd .ssh
+- cp id_rsa.pub Pi03
+- scp 192.168.1.1:/home/pi/.ssh/Pi01.
+- cat Pi01 >> authorized_keys
+end
+
+pi04
+
+- ssh pi@192.168.1.4
+- ssh-keygen
+- cd .ssh
+- cp id_rsa.pub Pi04
+- scp 192.168.1.1:/home/pi/.ssh/Pi01.
+- cat Pi01 >> authorized_keys
+end
+
+
+Pi01 (fazer isso para todos os Pi's)
+
+- scp 192.168.1.2:/home/pi/.ssh/Pi02.
+- cat Pi02 >> authorized_keys
+- scp 192.168.1.3:/home/pi/.ssh/Pi03.
+- cat Pi03 >> authorized_key s
+- scp 192.168.1.4:/home/pi/.ssh/Pi04.
+- cat Pi04 >> authorized_key s
+
+
+Execute um novo arquivo de máquina
+- cd ~
+
+ver nome de todas as maquinas conectadas(substituir 4 pelo numero de raspberrys conectadas)
+
+- mpiexec -f machinefile -n 4 hostname
+
+Execute o código Python no cluster
+
+- scp -r test5.py 192.168.1.166:/home/pi
+- mpiexec -f machinefile -n 5 python test5.py
