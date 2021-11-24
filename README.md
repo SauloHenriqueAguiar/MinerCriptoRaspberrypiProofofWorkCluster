@@ -1,4 +1,4 @@
-# MineraCryptoPoWMonero
+# MineraCryptoProofofWorkRaspberryPi
 Projeto Cluster de Mineração Criptomoedas com Raspberry Pi
 
 Foi utilizado o protocolo Proof of Work porém em piscina de mineração
