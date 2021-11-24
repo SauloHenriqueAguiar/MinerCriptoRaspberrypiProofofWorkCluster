@@ -1,0 +1,19 @@
+
+Compilação da Mineração de Criptomoeda
+
+1- primeiro passo é ir na plataforma MinerGate e fazer cadastro :https://br.minergate.com
+
+2- execute as seguintes atualizações
+
+sudo apt-get update && sudo apt-get upgrade -y
+sudo apt install git automake autoconf libcurl4-openssl-dev libjansson-dev libssl-dev libgmp-dev 
+cd cpuminer-multi
+
+3- compilar o código de mineração
+
+sudo ./autogen.sh
+sudo ./configure
+sudo ./build.sh
+
+4- Iniciar Mineração(adicione seu email, caso queira minerar outra moeda va no site minergate.com e mude o linl abaixo)
+./cpuminer -a cryptonight -o stratum+tcp://xmr.pool.minergate.com:45700 -u YOUR_EMAIL
